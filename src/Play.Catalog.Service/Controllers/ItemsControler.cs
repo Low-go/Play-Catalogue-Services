@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Play.Catalog.Service.Dtos;
 
@@ -22,7 +24,23 @@ namespace Play.Catalog.Service.Controllers
         // so when something is static it is shared among all instances of every object
         private static readonly List<ItemDto> items = new()
         {
-
+            new ItemDto(Guid.NewGuid(), "Potion", "Restores a small amount of HP", 5, DateTimeOffset.UtcNow),
+            new ItemDto(Guid.NewGuid(), "Antidote", "Cures Poison", 7, DateTimeOffset.UtcNow),
+            new ItemDto(Guid.NewGuid(), "Bronze Sword", "Deals a small amount of Damage", 20, DateTimeOffset.UtcNow)
         };
+
+        [HttpGet]
+        public IEnumerable<ItemDto> Get()
+        {
+            return items;
+        }
+
+        // Get /items/ the following would be the captured route {id}
+        [HttpGet("{id}")]
+        public ItemDto GetById(Guid id)
+        {
+            var item = items.Where(item => item.Id == id).SingleOrDefault();
+            return item;
+        }
     }
 }

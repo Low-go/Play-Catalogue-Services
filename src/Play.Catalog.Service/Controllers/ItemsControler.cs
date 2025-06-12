@@ -53,5 +53,31 @@ namespace Play.Catalog.Service.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
         }
+
+
+        //put /items/id
+        // this declaration is appended to our initial route
+        [HttpPut("{id}")]
+        public IActionResult Put(Guid id, UpdateItemDto updateItemDto)
+        {
+            var existingItem = items.Where(item => item.Id == id).SingleOrDefault();
+
+            // note to self
+            // with{} record with an exprression, it creates a new copy of an object
+            // possibly with some properties changed
+            // records are imutable in C# so with allows us to create a copy and modified version 
+            var updatedItem = existingItem with
+            {
+                Name = updateItemDto.Name,
+                Description = updateItemDto.Description,
+                Price = updateItemDto.Price
+            };
+
+            var index = items.FindIndex(existingItem => existingItem.Id == id);
+
+            items[index] = updatedItem;
+
+            return NoContent();
+        }
     }
 }
